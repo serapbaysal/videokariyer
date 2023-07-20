@@ -1,0 +1,12 @@
+{
+    "name": "macbookpro/videokariyer",
+    "autoload": {
+        "psr-4": {
+            "Macbookpro\\Videokariyer\\": "src/"
+        }
+    },
+    "require": {
+        "nikic/fast-route": "^1.3",
+        "izniburak/router": "^2.5"
+    }
+}
