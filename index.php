@@ -2,17 +2,21 @@
 
 require_once "src/Router/Router.php";
 require_once "src/DB/DB.php";
+require_once "src/Controller/User.php";
 use App\Router as Router;
+use Controller\User\User;
 
 
 $router = new Router();
 
 $db = new \DB\DB();
-$db->connectDB("127.0.0.1", "root", "my-secret-pw", "videokariyer");
 
-$router->get("/", function () {
-    echo "HOME";
-});
+$user = new User();
+
+
+$router->post("/users/register", $user->register());
+
+
 
 $router->get("/about", function () {
 
