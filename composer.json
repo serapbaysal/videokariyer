@@ -7,6 +7,9 @@
     },
     "require": {
         "nikic/fast-route": "^1.3",
-        "izniburak/router": "^2.5"
+        "izniburak/router": "^2.5",
+        "firebase/php-jwt": "^6.8",
+        "vlucas/phpdotenv": "^5.5",
+        "bramus/router": "^1.6"
     }
 }

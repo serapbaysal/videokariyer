@@ -27,4 +27,17 @@ class User
 
         $this->users->register($name, $surname, $email, $username, $phone, $password);
     }
+
+    public function login()
+    {
+        if($_POST["email"]) {
+            $email = $_POST["email"];
+            $password = $_POST["password"];
+            $this->users->login($email, "", $password);
+        } else if($_POST["username"]) {
+            $username = $_POST["username"];
+            $password = $_POST["password"];
+            $this->users->login("", $username, $password);
+        }
+    }
 }

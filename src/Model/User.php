@@ -1,8 +1,14 @@
 <?php
 
 namespace Model\Users;
-
 use DB\DB;
+use Firebase\JWT\JWT;
+
+use Dotenv\Dotenv;
+
+
+$dotenv = Dotenv::createUnsafeImmutable("./src");
+$dotenv->load();
 
 class User
 {
@@ -32,5 +38,52 @@ class User
         } else {
             echo "Error: " . $sql . "<br>" . $this->conn->error;
         }
+    }
+
+    public function login(string $email, $username, $password)
+    {
+        if($email != "") {
+            $payload = [
+                $email, $password
+            ];
+            $sql = "
+                UPDATE users
+                SET access_token = ?
+                WHERE email = ? AND password = ?
+            ";
+
+            $result = $this->conn->prepare($sql);
+
+            $access_token = JWT::encode($payload, $_ENV["JWT_SECRET"], "HS256");
+            $result->bind_param("sss", $access_token, $email, $password);
+            $result->execute();
+            if(!$result->error) {
+                echo $access_token;
+            }
+        } else if ($username != "") {
+            $payload = [
+                $username, $password
+            ];
+            $sql = "
+                UPDATE users
+                SET access_token = ?
+                WHERE username = ? AND password = ?
+            ";
+
+            $access_token = JWT::encode($payload, getenv("JWT_SECRET"),"HS256" );
+
+            $result = $this->conn->prepare($sql);
+            $result->bind_param("sss", $access_token, $username, $password);
+
+            $result->execute();
+
+            if(!$result->error) {
+                echo $access_token;
+            }
+        }
+        
+
+
+
     }
 }
