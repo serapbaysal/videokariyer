@@ -46,39 +46,71 @@ class User
             $payload = [
                 $email, $password
             ];
-            $sql = "
+            
+            $userSql = "
+                SELECT password
+                FROM users
+                WHERE email = '$email'
+            ";
+            $userResult = mysqli_query($this->conn, $userSql);
+
+            $rows = mysqli_fetch_all($userResult, MYSQLI_ASSOC);
+
+            foreach ($rows as $row) {
+                $sql = "
                 UPDATE users
                 SET access_token = ?
-                WHERE email = ? AND password = ?
+                WHERE email = ?
             ";
 
-            $result = $this->conn->prepare($sql);
+                $result = $this->conn->prepare($sql);
 
-            $access_token = JWT::encode($payload, $_ENV["JWT_SECRET"], "HS256");
-            $result->bind_param("sss", $access_token, $email, $password);
-            $result->execute();
-            if(!$result->error) {
-                echo $access_token;
+                $access_token = JWT::encode($payload, $_ENV["JWT_SECRET"], "HS256");
+
+                if(password_verify($password,$row["password"])) {
+                    $result->bind_param("ss", $access_token, $email);
+                    $result->execute();
+                }
+
+                if(!$result->error) {
+                    echo $access_token;
+                }
             }
+
+            
+         
         } else if ($username != "") {
             $payload = [
                 $username, $password
             ];
-            $sql = "
+
+            $userSql = "
+                SELECT password
+                FROM users
+                WHERE username = '$username'
+            ";
+            $userResult = mysqli_query($this->conn, $userSql);
+
+            $rows = mysqli_fetch_all($userResult, MYSQLI_ASSOC);
+
+            foreach ($rows as $row) {
+
+                $sql = "
                 UPDATE users
                 SET access_token = ?
-                WHERE username = ? AND password = ?
+                WHERE username = ?
             ";
 
-            $access_token = JWT::encode($payload, getenv("JWT_SECRET"),"HS256" );
+                $access_token = JWT::encode($payload, getenv("JWT_SECRET"), "HS256");
 
-            $result = $this->conn->prepare($sql);
-            $result->bind_param("sss", $access_token, $username, $password);
-
-            $result->execute();
-
-            if(!$result->error) {
-                echo $access_token;
+                $result = $this->conn->prepare($sql);
+                if(password_verify($password, $row["password"])) {
+                    $result->bind_param("ss", $access_token, $username);
+                    $result->execute();
+                }
+                if (!$result->error) {
+                    echo $access_token;
+                }
             }
         }
         
