@@ -11,11 +11,11 @@ class User
 {
     private $users;
 
+
     public function __construct()
     {
         $this->users = new Users\User();
     }
-
     public function register()
     {
         $name = $_POST["name"];
