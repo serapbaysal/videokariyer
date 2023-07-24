@@ -5,7 +5,6 @@ namespace Controller\User;
 require_once "src/Model/User.php";
 
 use Model\Users;
-use DB\DB;
 
 class User
 {
