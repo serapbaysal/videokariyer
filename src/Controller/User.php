@@ -32,11 +32,17 @@ class User
         if($_POST["email"]) {
             $email = $_POST["email"];
             $password = $_POST["password"];
-            $this->users->login($email, "", $password);
+            $ok = $this->users->login($email, "", $password);
+            if(isset($ok)) {
+                echo json_encode("Email or password is wrong. Please try again.");
+            }
         } else if($_POST["username"]) {
             $username = $_POST["username"];
             $password = $_POST["password"];
-            $this->users->login("", $username, $password);
+            $ok = $this->users->login("", $username, $password);
+            if(isset($ok)) {
+                echo json_encode("Email or password is wrong. Please try again.");
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 <?php
 
 namespace Model\Users;
+
 use DB\DB;
 use Firebase\JWT\JWT;
 
@@ -20,6 +21,7 @@ class User
         $this->conn = $db->connectDB();
 
     }
+
     public function register(string $name, $surname, $email, $username, $phone, $password)
     {
         $sql = "
@@ -30,10 +32,10 @@ class User
         $hashedPass = password_hash($password, PASSWORD_BCRYPT);
 
         $result = $this->conn->prepare($sql);
-        $result->bind_param("ssssss",$name, $surname, $email, $username, $phone, $hashedPass);
+        $result->bind_param("ssssss", $name, $surname, $email, $username, $phone, $hashedPass);
 
         $result->execute();
-        if(!$result->error){
+        if (!$result->error) {
             echo "New record created successfully";
         } else {
             echo "Error: " . $sql . "<br>" . $this->conn->error;
@@ -42,13 +44,13 @@ class User
 
     public function login(string $email, $username, $password)
     {
-        if($email != "") {
+        if ($email != "") {
             $payload = [
                 $email, $password
             ];
-            
+
             $userSql = "
-                SELECT password
+                SELECT CONCAT(name , ' ' , surname) AS fullname, email,  password, phone
                 FROM users
                 WHERE email = '$email'
             ";
@@ -66,26 +68,35 @@ class User
                 $result = $this->conn->prepare($sql);
 
                 $access_token = JWT::encode($payload, $_ENV["JWT_SECRET"], "HS256");
+                $verified = password_verify($password, $row["password"]);
 
-                if(password_verify($password,$row["password"])) {
+
+                if ($verified) {
                     $result->bind_param("ss", $access_token, $email);
                     $result->execute();
+                } else {
+                    return $verified;
                 }
 
-                if(!$result->error) {
-                    echo $access_token;
+                if (!$result->error) {
+                    $data = [
+                        "access token" => $access_token,
+                        "name" => $row["fullname"],
+                        "email" => $row["email"],
+                        "phone" => $row["phone"]
+                    ];
+                    echo json_encode($data);
                 }
             }
 
-            
-         
+
         } else if ($username != "") {
             $payload = [
                 $username, $password
             ];
 
             $userSql = "
-                SELECT password
+                SELECT CONCAT(name , ' ' , surname) AS fullname, email,  password, phone
                 FROM users
                 WHERE username = '$username'
             ";
@@ -104,12 +115,22 @@ class User
                 $access_token = JWT::encode($payload, getenv("JWT_SECRET"), "HS256");
 
                 $result = $this->conn->prepare($sql);
-                if(password_verify($password, $row["password"])) {
+                $verified = password_verify($password, $row["password"]);
+
+                if ($verified) {
                     $result->bind_param("ss", $access_token, $username);
                     $result->execute();
+                } else {
+                    return $verified;
                 }
                 if (!$result->error) {
-                    echo $access_token;
+                    $data = [
+                        "access token" => $access_token,
+                        "name" => $row["fullname"],
+                        "email" => $row["email"],
+                        "phone" => $row["phone"]
+                    ];
+                   echo json_encode($data);
                 }
             }
         }
