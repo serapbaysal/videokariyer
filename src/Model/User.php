@@ -115,4 +115,46 @@ class User
         }
 
     }
+
+    public function getAllUsers()
+    {
+        $sql = "
+                SELECT *
+                FROM users
+            ";
+        $result = mysqli_query($this->conn, $sql);
+
+        $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+
+        foreach ($rows as $row) {
+            $data[] = [
+                "name" => $row["name"] . " " . $row["surname"],
+                "email" => $row["email"],
+                "username" => $row["username"]
+            ];
+
+        }
+
+        return $data;
+    }
+
+    public function getUserByID($id)
+    {
+        $sql = "
+           SELECT *
+           FROM users
+           WHERE id= '$id'
+        ";
+        $result = mysqli_query($this->conn, $sql);
+
+        $row = mysqli_fetch_row($result);
+
+        return [
+            // name, surname
+            "name" => $row[1] . " " . $row[2],
+            "email" => $row[3],
+            "username" => $row[4]
+        ];
+    }
 }

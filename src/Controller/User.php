@@ -39,4 +39,21 @@ class User
             $this->users->login("", $username, $password);
         }
     }
+
+    public function getUsers()
+    {
+        $result = $this->users->getAllUsers();
+
+        echo json_encode($result);
+    }
+
+    public function getUserByID($id)
+    {
+        $result = $this->users->getUserByID($id);
+
+        echo json_encode($result);
+    }
+
+
+
 }
