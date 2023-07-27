@@ -12,6 +12,7 @@ class DB
         $db = "videokariyer";
 
         $conn = mysqli_connect($server, $user, $password, $db);
+        mysqli_set_charset($conn, "utf8");
 
         return $conn;
     }

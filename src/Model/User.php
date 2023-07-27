@@ -1,5 +1,4 @@
 <?php
-
 namespace Model\Users;
 
 use DB\DB;
@@ -7,6 +6,7 @@ use Firebase\JWT\JWT;
 
 use Dotenv\Dotenv;
 
+mysqli_report(MYSQLI_REPORT_OFF);
 
 $dotenv = Dotenv::createUnsafeImmutable("./src");
 $dotenv->load();
@@ -29,16 +29,17 @@ class User
             VALUES(?, ?, ?, ?, ?, ?, NOW(), NOW())
         ";
 
+        $result = mysqli_prepare($this->conn, $sql);
         $hashedPass = password_hash($password, PASSWORD_BCRYPT);
 
-        $result = $this->conn->prepare($sql);
-        $result->bind_param("ssssss", $name, $surname, $email, $username, $phone, $hashedPass);
+        mysqli_stmt_bind_param($result, "ssssss", $name, $surname, $email, $username, $phone, $hashedPass);
+        $ok = mysqli_stmt_execute($result);
 
-        $result->execute();
-        if (!$result->error) {
-            echo "New record created successfully";
+        if($ok) {
+            echo "Record successfully inserted.";
         } else {
-            echo "Error: " . $sql . "<br>" . $this->conn->error;
+           http_response_code(400);
+            echo "An account with that credentials is already exists. Please log in or sign up with another credentials.";
         }
     }
 
