@@ -86,6 +86,7 @@ class User
                         "email" => $row["email"],
                         "phone" => $row["phone"]
                     ];
+                    header('Content-Type: application/json; charset=utf-8');
                     echo json_encode($data);
                 }
             }
@@ -131,6 +132,8 @@ class User
                         "email" => $row["email"],
                         "phone" => $row["phone"]
                     ];
+
+                    header('Content-Type: application/json; charset=utf-8');
                    echo json_encode($data);
                 }
             }

@@ -34,6 +34,7 @@ class User
             $password = $_POST["password"];
             $ok = $this->users->login($email, "", $password);
             if(isset($ok)) {
+                header('Content-Type: application/json; charset=utf-8');
                 echo json_encode("Email or password is wrong. Please try again.");
             }
         } else if($_POST["username"]) {
@@ -41,6 +42,7 @@ class User
             $password = $_POST["password"];
             $ok = $this->users->login("", $username, $password);
             if(isset($ok)) {
+                header('Content-Type: application/json; charset=utf-8');
                 echo json_encode("Email or password is wrong. Please try again.");
             }
         }
@@ -50,6 +52,7 @@ class User
     {
         $result = $this->users->getAllUsers();
 
+        header('Content-Type: application/json; charset=utf-8');
         echo json_encode($result);
     }
 
@@ -57,6 +60,7 @@ class User
     {
         $result = $this->users->getUserByID($id);
 
+        header('Content-Type: application/json; charset=utf-8');
         echo json_encode($result);
     }
 

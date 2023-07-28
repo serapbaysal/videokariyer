@@ -28,8 +28,10 @@ class Company
         $result->execute();
 
         if (!$result->error) {
-            echo "New record created successfully";
+            header('Content-Type: application/json; charset=utf-8');
+            echo  json_encode("New record created successfully");
         } else {
+            header('Content-Type: application/json; charset=utf-8');
             echo "Error: " . $sql . "<br>" . $conn->error;
         }
 

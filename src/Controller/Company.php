@@ -27,7 +27,7 @@ class Company
     {
         $result = $this->companies->getCompanies();
 
-        header("Content-Type: application/json");
+        header('Content-Type: application/json; charset=utf-8');
 
         echo json_encode($result);
     }
@@ -36,6 +36,7 @@ class Company
     {
         $result = $this->companies->getCompanyByID($id);
 
+        header('Content-Type: application/json; charset=utf-8');
 
         echo json_encode($result);
     }

@@ -1,10 +1,10 @@
 <?php
 
-namespace Model\Applies;
+namespace Model\Answers;
 
 use DB\DB;
 
-class Apply
+class Answer
 {
     private $conn;
 
@@ -15,15 +15,14 @@ class Apply
 
     }
 
-    public function applyJob($user, $advert)
+    public function createAnswer($user, $question, $advert, $answer)
     {
         $sql = "
-            INSERT INTO applies (user, advert, applied_at)
-            VALUES  ( ? , ? , NOW())
-        ";
-
+                INSERT INTO answers(user_id, question_id, advert_id, answer)
+                VALUES(?, ?, ?, ?)
+            ";
         $result = $this->conn->prepare($sql);
-        $result->bind_param("si",$user, $advert);
+        $result->bind_param("iiis",$user, $question, $advert, $answer);
 
         $result->execute();
 

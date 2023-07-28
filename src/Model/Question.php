@@ -1,10 +1,10 @@
 <?php
 
-namespace Model\Applies;
+namespace Model\Questions;
 
 use DB\DB;
 
-class Apply
+class Question
 {
     private $conn;
 
@@ -15,24 +15,24 @@ class Apply
 
     }
 
-    public function applyJob($user, $advert)
+    public function createQuestion($question)
     {
         $sql = "
-            INSERT INTO applies (user, advert, applied_at)
-            VALUES  ( ? , ? , NOW())
+            INSERT INTO questions(question)
+            VALUES(?)
         ";
 
         $result = $this->conn->prepare($sql);
-        $result->bind_param("si",$user, $advert);
+        $result->bind_param("s",$question);
 
         $result->execute();
 
         if (!$result->error) {
             header('Content-Type: application/json; charset=utf-8');
-            echo json_encode("New record created successfully");
+            echo  json_encode("New record created successfully");
         } else {
             header('Content-Type: application/json; charset=utf-8');
-            echo json_encode("Error: " . $sql . "<br>" . $conn->error);
+            echo "Error: " . $sql . "<br>" . $conn->error;
         }
     }
 }

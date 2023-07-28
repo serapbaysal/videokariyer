@@ -4,6 +4,8 @@ use Controller\User\User;
 use Controller\Company\Company;
 use Controller\Advert\Advert;
 use Controller\Apply\Apply;
+use Controller\Question\Question;
+use Controller\Answer\Answer;
 use Files\Upload\Upload;
 use Files\Export\Export;
 use Pecee\SimpleRouter\SimpleRouter;
@@ -14,6 +16,8 @@ require_once "src/Controller/User.php";
 require_once "src/Controller/Company.php";
 require_once "src/Controller/Advert.php";
 require_once "src/Controller/Apply.php";
+require_once "src/Controller/Question.php";
+require_once "src/Controller/Answer.php";
 require_once "src/Files/Upload.php";
 require_once "src/Files/Export.php";
 
@@ -37,8 +41,15 @@ SimpleRouter::get("/adverts", [Advert::class, "getAdverts"]);
 
 SimpleRouter::post("/applies", [Apply::class, "applyJob"]);
 
+SimpleRouter::post("/questions", [Question::class, "createQuestion"]);
+
+SimpleRouter::post("/answers", [Answer::class, "answerQuestion"]);
+
 SimpleRouter::post("/upload", [Upload::class, "upload"]);
 SimpleRouter::get("/exportUsers", [Export::class, "exportUsers"]);
+SimpleRouter::get("/applyJob", [Export::class, "applyJob"]);
+
+
 
 
 SimpleRouter::start();

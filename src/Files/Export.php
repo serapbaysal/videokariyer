@@ -23,7 +23,7 @@ class Export
         ";
 
 
-        $fileName = "members-data_" . date('Y-m-d') . ".xls";
+        $fileName = "members-data_" . date('Y-m-d') . ".csv";
         $fields = array("id", "name", "surname", "username", "phone", "email_verified_at", "password", "access_token", "status", "created_at", "updated_at", "deleted_at");
 
         $excelData = implode("\t", array_values($fields)) . "\n";
@@ -55,7 +55,7 @@ class Export
         ";
 
 
-        $fileName = "education-data_" . date('Y-m-d') . ".xls";
+        $fileName = "education-data_" . date('Y-m-d') . ".csv";
         $fields = array("user_id", "university", "degree", "started_at", "ended_at");
 
         $excelData = implode("\t", array_values($fields)) . "\n";
@@ -67,6 +67,41 @@ class Export
 
         foreach ($rows as $row) {
             $lineData = array($row['user_id'], $row['university'], $row['degree'], $row['started_at'], $row['ended_at']);
+            $excelData .= implode("\t", array_values($lineData)) . "\n";
+        }
+
+        header("Content-Type: application/vnd.ms-excel");
+        header("Content-Disposition: attachment; filename=\"$fileName\"");
+
+        echo $excelData;
+
+        exit;
+    }
+
+    public function applyJob()
+    {
+        $sql = "
+            SELECT CONCAT(u.name, ' ', u.surname) AS user, ad.id AS advert, q.question AS question, ans.answer AS answer
+            FROM users AS u
+            INNER JOIN answers AS ans ON u.id = ans.user_id
+            INNER JOIN adverts AS ad ON ad.id = ans.advert_id
+            INNER JOIN questions AS q ON q.id = ans.question_id
+        ";
+
+
+        $fileName = "apply-data_" . date('Y-m-d') . ".csv";
+        $fields = array("user", "advert", "question", "answer");
+
+        $excelData = implode("\t", array_values($fields)) . "\n";
+
+        $result = mysqli_query($this->conn, $sql);
+
+        $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+
+
+        foreach ($rows as $row) {
+            $lineData = array(mb_convert_encoding($row["user"], "UTF-8", "auto"), mb_convert_encoding($row["advert"], "UTF-8", "auto"), mb_convert_encoding($row["question"], "UTF-8", "auto"), mb_convert_encoding($row["answer"],  "UTF-8", "auto"));
             $excelData .= implode("\t", array_values($lineData)) . "\n";
         }
 
