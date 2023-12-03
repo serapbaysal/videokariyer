@@ -12,27 +12,28 @@ class Question
     {
         $db = new DB();
         $this->conn = $db->connectDB();
-
+        header('Content-Type: application/json; charset=utf-8');
     }
 
     public function createQuestion($question)
     {
+        $id = uniqid();
         $sql = "
-            INSERT INTO questions(question)
-            VALUES(?)
+            INSERT INTO questions(id, question, created_at, updated_at)
+            VALUES(?,?,NOW(), NOW())
         ";
 
         $result = $this->conn->prepare($sql);
-        $result->bind_param("s",$question);
+        $result->bind_param("ss",$id,$question);
 
         $result->execute();
 
         if (!$result->error) {
             header('Content-Type: application/json; charset=utf-8');
-            echo  json_encode("New record created successfully");
+            echo  "New record created successfully";
         } else {
             header('Content-Type: application/json; charset=utf-8');
-            echo "Error: " . $sql . "<br>" . $conn->error;
+            echo"Error: " . $sql . "<br>" . $this->conn->error;
         }
     }
 }

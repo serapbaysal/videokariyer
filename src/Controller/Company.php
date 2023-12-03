@@ -16,11 +16,30 @@ class Company
         $this->companies = new Companies\Company();
     }
 
+    public function createCompanyAuthorizedPerson()
+    {
+        $name = $_POST["name"];
+        $surname = $_POST["surname"];
+        $company = $_POST["company"];
+        $position = $_POST["position"];
+        $email = $_POST["email"];
+
+        $this->companies->createAuthorizedPerson($name, $surname, $company, $position, $email);
+    }
+
     public function createCompany()
     {
         $name = $_POST["name"];
+        $scope = $_POST["scope"];
+        $authorized_person = $_POST["authorizedPerson"];
+        $address = $_POST["address"];
+        $email = $_POST["email"];
+        $website = $_POST["website"];
+        $photo = $_POST["photo"];
+        $video = $_POST["video"];
+        $social = $_POST["socialMedia"];
 
-        $this->companies->createCompany($name);
+        $this->companies->createCompany($name, $scope, $authorized_person, $address, $email, $website, $photo, $video, $social);
     }
 
     public function getCompanies()

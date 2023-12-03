@@ -12,17 +12,18 @@ class Answer
     {
         $db = new DB();
         $this->conn = $db->connectDB();
-
+        header('Content-Type: application/json; charset=utf-8');
     }
 
     public function createAnswer($user, $question, $advert, $answer)
     {
+        $id = uniqid();
         $sql = "
-                INSERT INTO answers(user_id, question_id, advert_id, answer)
-                VALUES(?, ?, ?, ?)
+                INSERT INTO answers(id, user, question, advert, video)
+                VALUES(?, ?, ?, ?, ?)
             ";
         $result = $this->conn->prepare($sql);
-        $result->bind_param("iiis",$user, $question, $advert, $answer);
+        $result->bind_param("sssss",$id,$user, $question, $advert, $answer);
 
         $result->execute();
 
@@ -31,7 +32,7 @@ class Answer
             echo json_encode("New record created successfully");
         } else {
             header('Content-Type: application/json; charset=utf-8');
-            echo json_encode("Error: " . $sql . "<br>" . $conn->error);
+            echo json_encode("Error: " . $sql . "<br>" . $this->conn->error);
         }
     }
 }

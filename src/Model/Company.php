@@ -12,27 +12,51 @@ class Company
     {
         $db = new DB();
         $this->conn = $db->connectDB();
-
+        header('Content-Type: application/json; charset=utf-8');
     }
 
-    public function createCompany($name)
+    public function createAuthorizedPerson($name, $surname, $company, $position, $email)
     {
+        $id = uniqid();
         $sql = "
-            INSERT INTO companies(name, created_at, updated_at)
-            VALUES(?, NOW(), NOW())
+            INSERT INTO authorizedPersons(id, name, surname, company, position, email, created_at, updated_at)
+            VALUES(?, ?, ?, ?,?,?, NOW(), NOW())
         ";
 
         $result = $this->conn->prepare($sql);
-        $result->bind_param("s",$name);
+        $result->bind_param("ssssss",$id,$name, $surname, $company, $position, $email);
 
         $result->execute();
 
         if (!$result->error) {
             header('Content-Type: application/json; charset=utf-8');
-            echo  json_encode("New record created successfully");
+            echo "New record created successfully";
         } else {
             header('Content-Type: application/json; charset=utf-8');
-            echo "Error: " . $sql . "<br>" . $conn->error;
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
+        }
+
+    }
+
+    public function createCompany($name, $scope, $authorized_person, $address, $email, $website, $photo, $video, $social)
+    {
+        $id = uniqid();
+        $sql = "
+            INSERT INTO companies(id, name, scope, authorized_person, address, email, website, photo, video, social_media, created_at, updated_at)
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+        ";
+
+        $result = $this->conn->prepare($sql);
+        $result->bind_param("ssssssssssss",$id,$name, $scope, $authorized_person, $address, $email, $website, $photo, $video, $social);
+
+        $result->execute();
+
+        if (!$result->error) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo "New record created successfully";
+        } else {
+            header('Content-Type: application/json; charset=utf-8');
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
         }
 
     }
@@ -72,7 +96,8 @@ class Company
 
         $data[] = [
             // row is an array, we can fetch name with a number
-            "name" => $row[2]
+            "name" => $row[1],
+            "id" => $row[0]
         ];
 
         return $data;
@@ -97,11 +122,6 @@ class Company
             $getResult = mysqli_query($this->conn, $getSql);
 
             $row = mysqli_fetch_row($getResult);
-
-            echo "<pre>";
-            var_dump($row);
-            echo "<pre>";
-            die;
             $data[] = [
                 // row is an array, we can fetch name with a number
                 "name" => $row
@@ -120,10 +140,10 @@ class Company
             WHERE id = '$id'
         ";
 
-        if ($conn->query($sql) === TRUE) {
+        if ($this->conn->query($sql) === TRUE) {
             echo "Record successfully deleted";
         } else {
-            echo "Error: " . $sql . "<br>" . $conn->error;
+            echo "Error: " . $sql . "<br>" . $this->conn->error;
         }
 
     }
