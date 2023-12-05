@@ -39,10 +39,6 @@ public function register($name, $surname, $username, $email, $tel, $password, $r
     if ($ok) {
         // UserRole tablosuna ekleme yapma işlemi (örnek olarak)
         $this->addUserRole($id, $role_id);
-       if($role_id==2){
-        $this->addCompanies($id, $name);
-       }
-
        return $id;
     } else {
         http_response_code(400);
