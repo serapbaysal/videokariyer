@@ -37,8 +37,31 @@ public function register($name, $surname, $username, $email, $tel, $password, $r
     $ok = mysqli_stmt_execute($stmt);
 
     if ($ok) {
-        // UserRole tablosuna ekleme yapma işlemi (örnek olarak)
-        $this->addUserRole($id, $role_id);
+        if($role_id == "656b05419ab2e") {
+            // UserRole tablosuna ekleme yapma işlemi (örnek olarak)
+            $this->addUserRole($id, $role_id);
+
+            // If role is company then insert a record to companies table too
+            $id = uniqid();
+            $sql = "
+            INSERT INTO companies(id, name, email, created_at, updated_at)
+            VALUES(?, ?, ?, NOW(), NOW())
+        ";
+
+            $result = $this->conn->prepare($sql);
+            $result->bind_param("sss",$id,$name, $email);
+
+            $result->execute();
+
+            if (!$result->error) {
+                header('Content-Type: application/json; charset=utf-8');
+                echo "New record has been created successfully";
+            } else {
+                header('Content-Type: application/json; charset=utf-8');
+                echo "Error: " . $sql . "<br>" . $this->conn->error;
+            }
+        }
+
        return $id;
     } else {
         http_response_code(400);
@@ -395,63 +418,66 @@ public function addCompanies($userId, $name)
             }
         }
     }
-
     public function getVideoWithQuestion($user_id)
-{
-    $query = "SELECT *
+    {
+        $query = "SELECT *
               FROM user_videos uv
               INNER JOIN video_questions q ON uv.question = q.id
               WHERE uv.user = ?";
-    $stmt = $this->conn->prepare($query);
-    $stmt->bind_param("s", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("s", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    $data = [];
-    // TODO: hata gelebilir question_id yok
-    while ($row = $result->fetch_assoc()) {
-        $data[] = [
-            "video" => $row["video"],
-            "question_id" => $row["question_id"],
-            "question" => $row["question"],
-            "user" => $row["user"],
-        ];
+        $data = [];
+        // TODO: hata gelebilir question_id yok
+        while ($row = $result->fetch_assoc()) {
+            $data[] = [
+                "video" => $row["video"],
+                "question_id" => $row["question_id"],
+                "question" => $row["question"],
+                "user" => $row["user"],
+            ];
+        }
+
+        return $data;
     }
 
-    return $data;
-}
+    public function deleteVideoWithQuestion($user_id, $question_id)
+    {
+        // Önce veritabanından video bilgilerini alın
+        $query = "SELECT video FROM user_videos WHERE user = ? AND question = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("ss", $user_id, $question_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-public function deleteVideoWithQuestion($user_id, $question_id)
-{
-    // Önce veritabanından video bilgilerini alın
-    $query = "SELECT video FROM user_videos WHERE user = ? AND question = ?";
-    $stmt = $this->conn->prepare($query);
-    $stmt->bind_param("ss", $user_id, $question_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
+        if ($result->num_rows === 0) {
+            // Belirtilen kullanıcı ve soru ID'sine sahip video bulunamadı.
+            return false;
+        }
 
-    if ($result->num_rows === 0) {
-        // Belirtilen kullanıcı ve soru ID'sine sahip video bulunamadı.
-        return false;
+        // Veritabanından videoyu silme işlemi
+        $deleteQuery = "DELETE FROM user_videos WHERE user = ? AND question = ?";
+        $deleteStmt = $this->conn->prepare($deleteQuery);
+        $deleteStmt->bind_param("ss", $user_id, $question_id);
+
+        if ($deleteStmt->execute()) {
+            // Silme işlemi başarılı oldu
+            $deletedVideo = $result->fetch_assoc()["video"];
+            // Silinen videoyu dosya sisteminden de silebilirsiniz, eğer gerekiyorsa.
+            unlink("wwwroot/assets/images/users/videos/".$deletedVideo);
+            return true;
+        } else {
+            // Silme işlemi başarısız oldu
+            return false;
+        }
     }
 
-    // Veritabanından videoyu silme işlemi
-    $deleteQuery = "DELETE FROM user_videos WHERE user = ? AND question = ?";
-    $deleteStmt = $this->conn->prepare($deleteQuery);
-    $deleteStmt->bind_param("ss", $user_id, $question_id);
+    public function getUserAndEducationInformations($userid)
+    {
 
-    if ($deleteStmt->execute()) {
-        // Silme işlemi başarılı oldu
-        $deletedVideo = $result->fetch_assoc()["video"];
-        // Silinen videoyu dosya sisteminden de silebilirsiniz, eğer gerekiyorsa.
-        unlink("wwwroot/assets/images/users/videos/".$deletedVideo);
-        return true;
-    } else {
-        // Silme işlemi başarısız oldu
-        return false;
     }
-}
-
 
 
 }
