@@ -106,8 +106,9 @@ public function createAdvert($title,$type,$company, $description, $department, $
         return false;
     }
 
+
     $stmt->close();
-    
+    return true;
 }
 
 public function getAdvertsBCompany($userID)
