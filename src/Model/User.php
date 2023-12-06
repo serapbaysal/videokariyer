@@ -37,7 +37,7 @@ public function register($name, $surname, $username, $email, $tel, $password, $r
     $ok = mysqli_stmt_execute($stmt);
 
     if ($ok) {
-        if($role_id == "656b05419ab2e") {
+        if($role_id == "656cb13e3083f") {
             // UserRole tablosuna ekleme yapma işlemi (örnek olarak)
             $this->addUserRole($id, $role_id);
 
