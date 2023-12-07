@@ -95,7 +95,7 @@ public function addCompanies($userId, $name)
     $data = [];
     if ($email != "") {
         $userSql = "
-            SELECT CONCAT(name , ' ' , surname) AS fullname, email, password, phone, id,userPhoto
+            SELECT CONCAT(name , ' ' , surname) AS fullname, username, email, password, phone, id,userPhoto
             FROM users
             WHERE email = '$email'
         ";
