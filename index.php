@@ -166,6 +166,7 @@ SimpleRouter::group(['prefix' => '/companies'], function () {
     SimpleRouter::get("/", [Company::class, "getCompanies"]); // checked
     SimpleRouter::get("/{id}", [Company::class, "getCompanyByID"]); // checked
     SimpleRouter::delete("/{id}", [Company::class, "deleteCompany"]); // checked
+    SimpleRouter::put("/update/{id}", [Company::class, "updateCompany"]);
 });
 
 

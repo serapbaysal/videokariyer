@@ -3,6 +3,7 @@
 namespace Controller\Company;
 
 use Model\Companies;
+use function Sodium\add;
 
 require_once "src/Model/Company.php";
 
@@ -62,15 +63,14 @@ class Company
 
     public function updateCompany($id)
     {
-        parse_str(file_get_contents('php://input'), $_PUT);
+        $data = json_decode(file_get_contents('php://input'), true);
 
-        echo "<pre>";
-        var_dump($_PUT);
-        echo "<pre>";
-        die;
+        $website = $data["website"];
+        $photo = $data["photo"];
+        $socialmedia = $data["socialmedia"];
+        $address = $data["address"];
 
-
-        $result = $this->companies->updateCompany($id, $name);
+        $result = $this->companies->updateCompany($id, $website, $photo, $socialmedia, $address);
 
         echo json_encode($result);
     }

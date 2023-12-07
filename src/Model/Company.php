@@ -103,18 +103,21 @@ class Company
         return $data;
     }
 
-    public function updateCompany($id, $name)
+    public function updateCompany($id, $website, $photo, $socialmedia, $address)
     {
         $sql = "
                 UPDATE companies
-                SET name='$name', updated_at = NOW()
-                WHERE id = '$id'
+                SET website = ?, photo = ?, social_media = ?, address = ?, updated_at = NOW()
+                WHERE id = ?
             ";
-        $result = mysqli_query($this->conn, $sql);
+        $result = $this->conn->prepare($sql);
+        $result->bind_param("sssss", $website, $photo, $socialmedia, $address, $id);
 
-        if ($result) {
+        $result->execute();
+
+        if (!$result->error) {
             $getSql = "
-                SELECT name
+                SELECT *
                 FROM companies
                 WHERE id = '$id'
             ";
@@ -122,13 +125,11 @@ class Company
             $getResult = mysqli_query($this->conn, $getSql);
 
             $row = mysqli_fetch_row($getResult);
-            $data[] = [
-                // row is an array, we can fetch name with a number
-                "name" => $row
-            ];
 
-            return $data;
+            return $row;
 
+        } else {
+            echo $result->error;
         }
     }
 
