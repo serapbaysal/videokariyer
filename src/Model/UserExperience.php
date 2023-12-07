@@ -23,8 +23,8 @@ class UserExperience{
                               end_time,
                               created_at,
                               updated_at
-                              ) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssssss",$id, $user_id, $department, $title, $company, $start_time, $end_time, NOW(), NOW());
+                              ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+        $stmt->bind_param("sssssss",$id, $user_id, $department, $title, $company, $start_time, $end_time);
         $result = $stmt->execute();
         
         $stmt->close();

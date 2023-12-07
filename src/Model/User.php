@@ -37,12 +37,10 @@ public function register($name, $surname, $username, $email, $tel, $password, $r
     $ok = mysqli_stmt_execute($stmt);
 
     if ($ok) {
+        // UserRole tablosuna ekleme yapma işlemi (örnek olarak)
+        $this->addUserRole($id, $role_id);
         if($role_id == "656cb13e3083f") {
-            // UserRole tablosuna ekleme yapma işlemi (örnek olarak)
-            $this->addUserRole($id, $role_id);
-
             // If role is company then insert a record to companies table too
-            $id = uniqid();
             $sql = "
             INSERT INTO companies(id, name, email, created_at, updated_at)
             VALUES(?, ?, ?, NOW(), NOW())
